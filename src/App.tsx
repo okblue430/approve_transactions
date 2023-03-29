@@ -51,7 +51,7 @@ export function App() {
         <hr className="RampBreak--l" />
 
         <InputSelect<Employee>
-          isLoading={isLoading}
+          isLoading={isLoading && employees === null} // fix bug5
           defaultValue={EMPTY_EMPLOYEE}
           items={employees === null ? [] : [EMPTY_EMPLOYEE, ...employees]}
           label="Filter by employee"
@@ -63,6 +63,9 @@ export function App() {
           onChange={async (newValue) => {
             if (newValue === null) {
               return
+            }else if(newValue.id === '') {
+              // all employee
+              return await loadAllTransactions()
             }
 
             await loadTransactionsByEmployee(newValue.id)
@@ -77,7 +80,7 @@ export function App() {
           {transactions !== null && (
             <button
               className="RampButton"
-              disabled={paginatedTransactionsUtils.loading}
+              disabled={paginatedTransactionsUtils.loading || paginatedTransactions?.nextPage === null}
               onClick={async () => {
                 await loadAllTransactions()
               }}
